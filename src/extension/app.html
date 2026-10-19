@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Easy Convert</title>
+  <link rel="icon" href="icons/icon-32.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <main>
+    <section class="drop" id="drop" tabindex="0" aria-label="Drop files here, or press Enter to choose files">
+      <img class="logo" src="icons/icon-128.png" alt="" width="88" height="88">
+      <h1>Drop any file here</h1>
+      <p>The wheel opens where you let go. Pick a format or a tool; the result goes to your Downloads.</p>
+      <button class="btn" id="pick">Choose files…</button>
+      <input type="file" id="file" multiple hidden>
+    </section>
+    <section class="cards">
+      <article class="card">
+        <h2>On any website</h2>
+        <ul>
+          <li>Hold <kbd>Shift</kbd> while dragging a file onto a page — the wheel appears under your cursor.</li>
+          <li>Right-click an image or a file link → <b>Easy Convert</b>.</li>
+          <li>Press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd> to open this page.</li>
+        </ul>
+        <label class="toggle"><input type="checkbox" id="alwaysOnDrag"><span>Show the wheel on every file drag (no <kbd>Shift</kbd> needed)</span></label>
+      </article>
+      <article class="card">
+        <h2>Everything stays on your computer</h2>
+        <p>Files are converted inside your browser. Nothing is uploaded.</p>
+        <p class="muted">Video, audio and the highest-fidelity Word/Excel/PowerPoint conversions need the free <b>Easy Convert for Windows</b> app.</p>
+      </article>
+    </section>
+  </main>
+  <div id="layer"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
