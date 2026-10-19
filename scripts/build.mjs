@@ -123,7 +123,9 @@ async function extension() {
 async function demo() {
   const out = path.join(root, 'build', 'demo');
   await fs.mkdir(out, { recursive: true });
-  await run({ ...common, entryPoints: { demo: 'src/dev/demo.js', 'editor-demo': 'src/dev/editor-demo.js' }, outdir: out, format: 'esm' });
+  await run({ ...common, entryPoints: { demo: 'src/dev/demo.js', 'editor-demo': 'src/dev/editor-demo.js', promo: 'src/dev/promo.js' }, outdir: out, format: 'esm' });
+  await copy('src/dev/promo.html', path.join(out, 'promo.html'));
+  await writeIcons(out, [512]);
   await copy('src/dev/demo.html', path.join(out, 'index.html'));
   await copy('src/dev/editor.html', path.join(out, 'editor.html'));
 }

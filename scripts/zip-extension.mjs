@@ -9,7 +9,7 @@ async function add(rel) {
   for (const e of await fs.readdir(path.join(dir, rel), { withFileTypes: true })) {
     const p = path.join(rel, e.name);
     if (e.isDirectory()) await add(p);
-    else if (!p.endsWith('.map')) zip.file(p.replace(/\/g, '/'), await fs.readFile(path.join(dir, p)));
+    else if (!p.endsWith('.map')) zip.file(p.split(path.sep).join('/'),await fs.readFile(path.join(dir, p)));
   }
 }
 await add('');
