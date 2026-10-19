@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Easy Convert — promo</title>
+<style>
+  html, body { margin: 0; width: 1080px; height: 1080px; overflow: hidden; background: #000; }
+  /* Frames are rendered by seeking a timeline, so real-time animation is off. */
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  #stage {
+    position: relative; width: 1080px; height: 1080px; overflow: hidden;
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif; color: #fff;
+    background: radial-gradient(900px 700px at 0% 0%, #ffd29a 0%, transparent 60%),
+                radial-gradient(800px 700px at 100% 100%, #c9a2ff 0%, transparent 55%),
+                linear-gradient(135deg, #ffb35c 0%, #ff6a3d 42%, #e8508a 78%, #9aa6ff 100%);
+  }
+  .scene { position: absolute; inset: 0; opacity: 0; }
+  .center { display: grid; place-items: center; align-content: center; text-align: center; }
+  .big { font-size: 96px; font-weight: 700; letter-spacing: -.02em; text-shadow: 0 6px 30px rgba(120, 30, 10, .3); }
+  .sub { font-size: 38px; font-weight: 500; opacity: .95; text-shadow: 0 2px 16px rgba(120, 30, 10, .3); }
+  .small { font-size: 28px; font-weight: 600; opacity: .95; }
+  .pill { display: inline-block; margin-top: 26px; padding: 14px 26px; border-radius: 999px; background: rgba(255,255,255,.95); color: #e2442a; font-size: 26px; font-weight: 700; box-shadow: 0 10px 30px rgba(120,30,10,.25); }
+  .caption {
+    position: absolute; left: 50%; bottom: 64px; transform: translateX(-50%); white-space: nowrap;
+    padding: 18px 30px; border-radius: 22px; font-size: 34px; font-weight: 650; color: #3b2620;
+    background: rgba(255, 250, 246, .94); box-shadow: 0 16px 40px rgba(90, 30, 10, .25);
+  }
+  .caption b { color: #e2442a; }
+
+  /* desktop files */
+  .file { position: absolute; width: 150px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .file .page { position: relative; width: 92px; height: 116px; border-radius: 8px; background: #fff; box-shadow: 0 8px 22px rgba(80, 20, 10, .28); overflow: hidden; }
+  .file .page::after { content: ''; position: absolute; right: 0; top: 0; width: 26px; height: 26px; background: linear-gradient(225deg, #f2ebe7 50%, #fff 50%); box-shadow: -2px 2px 4px rgba(0,0,0,.08); }
+  .file .lines { position: absolute; left: 14px; right: 14px; top: 22px; display: grid; gap: 7px; }
+  .file .lines i { display: block; height: 5px; border-radius: 3px; background: #e3dedb; }
+  .file .badge { position: absolute; left: 0; right: 0; bottom: 12px; margin: 0 10px; padding: 4px 0; border-radius: 6px; text-align: center; font-size: 17px; font-weight: 800; letter-spacing: .04em; color: #fff; }
+  .file .name { font-size: 22px; font-weight: 600; text-shadow: 0 2px 6px rgba(0,0,0,.45); }
+  .file.sel .page { outline: 4px solid rgba(255,255,255,.85); outline-offset: 6px; }
+  .file .thumb { position: absolute; inset: 0; background: linear-gradient(160deg, #ffd56b, #ff7b54 55%, #a650c8); }
+  .file .thumb::before { content: ''; position: absolute; left: 18px; bottom: 34px; width: 60px; height: 34px; background: #3b2a55; clip-path: polygon(0 100%, 35% 20%, 55% 60%, 75% 30%, 100% 100%); }
+  .file .thumb::after { content: none; }
+
+  /* Windows 11 context menu */
+  .menu { position: absolute; width: 330px; padding: 8px; border-radius: 14px; background: rgba(250, 250, 252, .97); color: #1b1b1f;
+    box-shadow: 0 20px 50px rgba(0,0,0,.28), 0 0 0 1px rgba(0,0,0,.06); font: 22px "Segoe UI Variable Text", "Segoe UI", sans-serif; }
+  .menu div { display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-radius: 8px; }
+  .menu hr { border: 0; border-top: 1px solid #e3e3e8; margin: 6px 4px; }
+  .menu .ec img { width: 26px; height: 26px; }
+  .menu .ec.hot { background: #ffe9e0; color: #c53b20; font-weight: 600; }
+  .menu svg { width: 22px; height: 22px; opacity: .65; }
+
+  /* cursor + click pulse */
+  #cursor { position: absolute; width: 38px; height: 38px; z-index: 50; filter: drop-shadow(0 3px 4px rgba(0,0,0,.35)); }
+  #pulse { position: absolute; z-index: 49; border-radius: 50%; border: 4px solid rgba(255,255,255,.9); opacity: 0; }
+
+  /* editor window */
+  #s-editor { background: rgba(40, 15, 5, .28); }
+  #editorWin { position: absolute; left: 110px; top: 90px; width: 860px; height: 800px; }
+
+  /* chrome window */
+  .chrome { position: absolute; left: 60px; top: 70px; width: 960px; height: 820px; border-radius: 18px; overflow: hidden; background: #fff;
+    box-shadow: 0 30px 80px rgba(60, 20, 10, .35); color: #222; font-family: "Segoe UI", sans-serif; }
+  .chrome .tabs { height: 52px; background: #e9e4f1; display: flex; align-items: flex-end; padding: 0 14px; gap: 6px; }
+  .chrome .tab { height: 40px; padding: 0 18px; border-radius: 12px 12px 0 0; background: #fff; display: flex; align-items: center; gap: 10px; font-size: 18px; }
+  .chrome .tab i { width: 18px; height: 18px; border-radius: 4px; background: #4f7cff; }
+  .chrome .bar { height: 58px; display: flex; align-items: center; gap: 14px; padding: 0 18px; border-bottom: 1px solid #ececf2; }
+  .chrome .url { flex: 1; height: 38px; border-radius: 19px; background: #f1f0f5; display: flex; align-items: center; padding: 0 18px; font-size: 18px; color: #555; }
+  .chrome .ext { width: 34px; height: 34px; border-radius: 9px; }
+  .chrome .page { padding: 40px 54px; display: grid; gap: 22px; }
+  .chrome .h { height: 30px; width: 46%; border-radius: 8px; background: #ececf3; }
+  .chrome .p { height: 14px; border-radius: 7px; background: #f0f0f5; }
+  .chrome .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 10px; }
+  .chrome .card { height: 150px; border-radius: 14px; background: #f6f5fa; }
+  .ghost { position: absolute; z-index: 45; width: 110px; opacity: .92; }
+  .shiftkey { position: absolute; z-index: 46; padding: 10px 18px; border-radius: 12px; background: #fff; color: #3b2620; font: 700 26px "Segoe UI", sans-serif; box-shadow: 0 8px 20px rgba(0,0,0,.25); border-bottom: 5px solid #d9cfca; }
+  .dl { position: absolute; right: 26px; top: 116px; width: 380px; padding: 18px; border-radius: 14px; background: #fff; box-shadow: 0 16px 40px rgba(0,0,0,.2); display: flex; gap: 14px; align-items: center; font-size: 19px; color: #222; }
+  .dl .doc { width: 40px; height: 50px; border-radius: 6px; background: #2b6cdf; color: #fff; font: 800 11px sans-serif; display: grid; place-items: end center; padding-bottom: 6px; box-sizing: border-box; }
+  .dl small { display: block; color: #1a8f3c; font-weight: 600; }
+  #wheelLayer { position: absolute; inset: 0; z-index: 40; }
+  /* Larger wheel text for small screens (the promo is mostly watched on phones). */
+  #wheelLayer .ecw-label { font-size: 17px; }
+  #wheelLayer .ecw-label.ecw-has-icon { font-size: 13px; }
+  #wheelLayer .ecw-label svg { width: 22px; height: 22px; }
+  #wheelLayer .ecw-kicker { font-size: 13px; }
+  #wheelLayer .ecw-title { font-size: 17px; }
+  #wheelLayer .ecw-sub { font-size: 14px; }
+  #wheelLayer .ecw-pill { font-size: 18px; padding: 9px 18px; }
+  #wheelLayer .ecw-big { font-size: 30px; }
+  #wheelLayer .ecw-badge { width: 46px; height: 46px; }
+  #wheelLayer .ecw-switch { font-size: 13px; padding: 7px 13px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <section class="scene center" id="s-title">
+    <div>
+      <img id="logo" src="icon-512.png" width="230" height="230" alt="">
+      <div class="big" id="t1">Easy Convert</div>
+      <div class="sub" id="t2">Any file → any format. One wheel.</div>
+    </div>
+  </section>
+
+  <section class="scene" id="s-desk">
+    <div id="files"></div>
+    <div class="menu" id="menu" style="display:none"></div>
+    <div class="caption" id="cap-desk"></div>
+  </section>
+
+  <section class="scene" id="s-editor">
+    <div id="editorWin"></div>
+    <div class="caption"><b>Crop · Add BG · Redact · Annotate</b> — built in</div>
+  </section>
+
+  <section class="scene" id="s-chrome">
+    <div class="chrome">
+      <div class="tabs"><div class="tab"><i></i>Inbox — Mail</div></div>
+      <div class="bar"><div class="url">mail.example.com/inbox</div><img class="ext" src="icon-512.png" alt=""></div>
+      <div class="page"><div class="h"></div><div class="p"></div><div class="p" style="width:80%"></div><div class="p" style="width:65%"></div>
+        <div class="cards"><div class="card"></div><div class="card"></div><div class="card"></div></div>
+        <div class="p" style="width:90%"></div><div class="p" style="width:70%"></div></div>
+    </div>
+    <div class="dl" id="dl" style="display:none"><div class="doc">DOCX</div><div>invoice.docx<small>Downloaded</small></div></div>
+    <div class="caption">Chrome: hold <b>Shift</b> while dragging a file onto any page</div>
+  </section>
+
+  <section class="scene center" id="s-end">
+    <div>
+      <img src="icon-512.png" width="190" height="190" alt="">
+      <div class="big" style="font-size:88px">Easy Convert</div>
+      <div class="sub">Windows app + Chrome extension</div>
+      <div class="small" style="margin-top:14px">Word · Excel · PowerPoint · PDF · Images · Video · Audio</div>
+      <div class="pill">github.com/AMIRAK-code/easy-converter-ext-desktop-app</div>
+    </div>
+  </section>
+
+  <div id="wheelLayer"></div>
+  <div id="pulse"></div>
+  <svg id="cursor" viewBox="0 0 24 24"><path d="M3 2l7.5 19 2.6-7.9L21 10.5z" fill="#fff" stroke="#1b1b1f" stroke-width="1.4" stroke-linejoin="round"/></svg>
+</div>
+<script type="module" src="promo.js"></script>
+</body>
+</html>
