@@ -1,0 +1,40 @@
+:root { --ink: #3b2620; --soft: #8d6c60; --accent: #ff4d2e; --card: rgba(255, 250, 246, .82); color-scheme: light; }
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  font: 15px/1.5 "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif; color: var(--ink);
+  background: radial-gradient(1200px 700px at 0% 0%, #ffd29a 0%, transparent 60%),
+              radial-gradient(900px 700px at 100% 100%, #c9a2ff 0%, transparent 55%),
+              linear-gradient(135deg, #ffb35c 0%, #ff6a3d 45%, #e8508a 80%, #9aa6ff 100%) fixed;
+  -webkit-font-smoothing: antialiased;
+}
+main { max-width: 980px; margin: 0 auto; padding: 32px 16px 48px; display: grid; gap: 18px; }
+.drop {
+  min-height: 360px; border-radius: 26px; border: 2px dashed rgba(255, 255, 255, .75); background: rgba(255, 255, 255, .16);
+  display: grid; place-items: center; align-content: center; gap: 6px; text-align: center; color: #fff; padding: 32px 16px;
+  text-shadow: 0 1px 8px rgba(120, 30, 10, .25); outline: none; transition: background .15s;
+}
+.drop.over { background: rgba(255, 255, 255, .32); }
+.drop:focus-visible { box-shadow: 0 0 0 3px #fff; }
+.logo { filter: drop-shadow(0 12px 24px rgba(120, 30, 10, .35)); }
+h1 { margin: 10px 0 0; font-size: clamp(24px, 4vw, 34px); letter-spacing: -.01em; }
+.drop p { margin: 0 0 12px; max-width: 460px; }
+.btn {
+  border: 0; padding: 11px 22px; border-radius: 12px; font: inherit; font-weight: 650; cursor: pointer;
+  color: var(--accent); background: #fff; box-shadow: 0 6px 18px rgba(120, 30, 10, .25); text-shadow: none;
+}
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+.card { background: var(--card); border-radius: 20px; padding: 18px 20px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .6) inset, 0 20px 50px rgba(90, 30, 10, .18); }
+.card h2 { margin: 0 0 8px; font-size: 16px; }
+.card ul { margin: 0 0 12px; padding-left: 18px; }
+.card li { margin: 4px 0; }
+.muted { color: var(--soft); font-size: 13.5px; }
+kbd { font: inherit; font-size: 12px; padding: 1px 6px; border-radius: 5px; background: rgba(120, 60, 40, .1); }
+.toggle { display: flex; gap: 10px; align-items: center; cursor: pointer; font-size: 14px; }
+.toggle input { width: 18px; height: 18px; accent-color: var(--accent); }
+#layer { position: fixed; inset: 0; pointer-events: none; }
+#layer.active { pointer-events: auto; background: rgba(40, 15, 5, .12); }
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #f4e9e3; --soft: #b7a097; --card: rgba(36, 29, 27, .86); color-scheme: dark; }
+  kbd { background: rgba(255, 255, 255, .12); }
+}

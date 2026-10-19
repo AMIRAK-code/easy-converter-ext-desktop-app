@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Easy Convert — any file, any format",
+  "short_name": "Easy Convert",
+  "version": "0.1.0",
+  "description": "Hold Shift while dragging a file onto any page — or right-click an image or link — and pick a format from a wheel. Runs locally.",
+  "icons": { "16": "icons/icon-16.png", "32": "icons/icon-32.png", "48": "icons/icon-48.png", "128": "icons/icon-128.png" },
+  "action": {
+    "default_title": "Easy Convert",
+    "default_icon": { "16": "icons/icon-16.png", "32": "icons/icon-32.png" }
+  },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "permissions": ["contextMenus", "downloads", "storage", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    { "matches": ["<all_urls>"], "js": ["content.js"], "run_at": "document_idle" }
+  ],
+  "web_accessible_resources": [
+    { "resources": ["overlay.html", "overlay.js", "overlay.js.map", "chunk-*.js", "pdf.worker.min.mjs", "pdfjs/*"], "matches": ["<all_urls>"] }
+  ],
+  "commands": {
+    "_execute_action": { "suggested_key": { "default": "Alt+Shift+E" }, "description": "Open Easy Convert" }
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
+}
